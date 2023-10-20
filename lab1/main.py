@@ -42,17 +42,41 @@ class CoordinateSystemApp:
             #x1, y1, x2, y2 = x1 * width//10, y1 * height//10, x2 * width//10, y2 * height//10
             #x1, y1, x2, y2 = x1 + width//2, height//2 - y1, x2 + width//2, height//2 - y2
             # line drawing
-            if x1 != x2:
-                slope = (y2 - y1) / (x2 - x1)
-                intercept = y1 - slope * x1
+            x1, y1, x2, y2 = map(float, coordinates.split(','))
+            '''if x1 < x2:
+                x1, x2 = 0, width
+                y1 = (y2 - y1) / (x2 - x1) * (x1 - x2) + y2
             else:
-                slope = None
-                intercept = x1
-            if slope is not None:
-                x1, y1, x2, y2 = -width//2, int(-slope * height//2 + intercept) + height//2, width//2, int(slope * height//2 + intercept) + height//2
-            else:
-                x1, y1, x2, y2 = x1 + width//2, int(-slope * height//2 + intercept) + height//2, x1 + width//2, int(slope * height//2 + intercept)
+                x1, x2 = 0, width
+                y2 = (y1 - y2) / (x1 - x2) * (x1 - x2) + y1'''
+            x1, y1, x2, y2 = x1 * width//10, y1 * height//10, x2 * width//10, y2 * height//10
+            x1, y1, x2, y2 = x1 + width//2, height//2 - y1, x2 + width//2, height//2 - y2
+            dx = abs(x2 - x1)
+            dy = abs(y2 - y1)
 
+            # Определяем направление движения по осям
+            sx = 1 if x1 < x2 else -1
+            sy = 1 if y1 < y2 else -1
+
+            # Определяем ошибку
+            err = dx - dy
+
+            # Инициализируем начальные координаты
+            x = x1
+            y = y1
+
+            # Рисуем прямую
+            while True:
+                self.canvas.create_rectangle(x, y, x, y, outline='blue')
+                if x == x2 and y == y2:
+                    break
+                e2 = 2 * err
+                if e2 > -dy:
+                    err -= dy
+                    x += sx
+                if e2 < dx:
+                    err += dx
+                    y += sy
             self.canvas.create_line(x1, y1, x2, y2, fill='blue', width=2)
         except ValueError:
             print("Invalid input for line coordinates. Please use the format: x1, y1, x2, y2")
