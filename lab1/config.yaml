@@ -1,6 +1,6 @@
 # Window size
+width: 840
 height: 640
-width: 640
 # Surface size (t = [-t//2, t//2])
 Ox: 4
 Oy: 4

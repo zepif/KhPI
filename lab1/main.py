@@ -34,6 +34,12 @@ class CoordinateSystemApp:
         self.add_circle_button = tk.Button(self.root, text="Add Circle", command=self.add_circle)
         self.add_circle_button.pack()
 
+        '''self.delete_line_button = tk.Button(self.root, text="Delete Line", command=self.delete_line)
+        self.delete_line_button.pack()
+        
+        self.delete_circle_button = tk.Button(self.root, text="Delete Circle", command=self.delete_circle)
+        self.delete_circle_button.pack()'''
+
         self.canvas.bind("<Button-1>", self.on_canvas_click)
         self.pixel_grid = [['white' for _ in range(width*2)] for _ in range(height*2)]
 
@@ -142,10 +148,12 @@ class CoordinateSystemApp:
         coordinates = self.circle_entry.get()
         try:
             center_x, center_y, radius = map(float, coordinates.split(','))
-            center_x, center_y, radius = center_x * width//Ox, center_y * height//Oy, radius * (height+width)//(Ox+Oy)
+            center_x, center_y, radius = center_x * width//Ox, center_y * height//Oy, radius
             center_x, center_y = center_x + width//2, height//2 - center_y
             self.draw_circle_on_grid(int(center_x), int(center_y), int(radius), 'blue')
-            self.canvas.create_oval(center_x - radius, center_y - radius, center_x + radius, center_y + radius, outline='blue', width=2)
+            self.canvas.create_oval(center_x - radius * (width / Ox), center_y - radius * (height / Oy),
+                                    center_x + radius * (width / Ox), center_y + radius * (height / Oy),
+                                    outline='blue', width=2)
         except ValueError:
             print("Invalid input for circle coordinates. Please use the format: center_x, center_y, radius")
 
