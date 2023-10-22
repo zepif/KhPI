@@ -1,5 +1,6 @@
 import tkinter as tk
 from collections import deque
+import yaml
 
 class CoordinateSystemApp:
     def __init__(self, root):
@@ -7,7 +8,15 @@ class CoordinateSystemApp:
         self.root.title("Coordinate System")
         
         global height, width
-        height, width = 640, 640
+        with open("config.yaml", "r") as config_file:
+            config = yaml.safe_load(config_file)
+            height = config["height"]
+            width = config["width"]
+        global Ox, Oy
+        with open("config.yaml", "r") as config_file:
+            config = yaml.safe_load(config_file)
+            Ox = config["Ox"]
+            Oy = config["Oy"]
         self.canvas = tk.Canvas(self.root, width=width, height=height, bg='white')
         self.canvas.pack()
         
@@ -31,9 +40,10 @@ class CoordinateSystemApp:
         self.draw_coordinate_system()
         
     def draw_coordinate_system(self):
-        for i in range(-5, 6):
-            self.canvas.create_line(width//2 + i * width//10, 0, width//2 + i * width//10, height, fill='lightgray')
-            self.canvas.create_line(0, height//2 + i * height//10, width, height//2 + i * height//10, fill='lightgray')
+        for i in range(-Ox//2, Ox//2+1):
+            self.canvas.create_line(width//2 + i * width//Ox, 0, width//2 + i * width//Ox, height, fill='lightgray')
+        for i in range(-Oy//2, Oy//2+1):
+            self.canvas.create_line(0, height//2 + i * height//Oy, width, height//2 + i * height//Oy, fill='lightgray')
         
         self.canvas.create_line(0, height//2, width, height//2, fill='black', width=2)
         self.canvas.create_line(width//2, 0, width//2, height, fill='black', width=2)
@@ -70,7 +80,7 @@ class CoordinateSystemApp:
             #x1, y1, x2, y2 = x1 + width//2, height//2 - y1, x2 + width//2, height//2 - y2
             # line drawing
             x1, y1, x2, y2 = map(float, coordinates.split(','))
-            x1, y1, x2, y2 = x1 * width//10, y1 * height//10, x2 * width//10, y2 * height//10
+            x1, y1, x2, y2 = x1 * width//(Ox//2), y1 * height//(Oy//2), x2 * width//(Ox//2), y2 * height//(Oy//2)
             x1, y1, x2, y2 = x1 + width//2, height//2 - y1, x2 + width//2, height//2 - y2
             dx, dy = (x2 - x1), (y2 - y1)
             x1, x2, y1, y2 = x1 + dx * 5000, x2 - dx * 5000, y1 + dy * 5000,  y2 - dy * 5000
@@ -105,7 +115,7 @@ class CoordinateSystemApp:
         coordinates = self.circle_entry.get()
         try:
             center_x, center_y, radius = map(float, coordinates.split(','))
-            center_x, center_y, radius = center_x * width//10, center_y * height//10, radius * (height+width)//20
+            center_x, center_y, radius = center_x * width//(Ox//2), center_y * height//(Oy//2), radius * (height+width)//((Ox+Oy)//2)
             center_x, center_y = center_x + width//2, height//2 - center_y
             self.draw_circle_on_grid(int(center_x), int(center_y), int(radius), 'blue')
             self.canvas.create_oval(center_x - radius, center_y - radius, center_x + radius, center_y + radius, outline='blue', width=2)
@@ -133,7 +143,7 @@ class CoordinateSystemApp:
                         stack.append((new_x, new_y))
             filled.add((x, y))
 
-        return (area/3200)/1.28
+        return area * ((Ox*Oy)/(width*height))
 
     def on_canvas_click(self, event):
         x, y = event.x, event.y

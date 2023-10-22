@@ -1,0 +1,6 @@
+# Window size
+height: 320
+width: 320
+# Surface size (t = [-t//2, t//2])
+Ox: 10
+Oy: 10
