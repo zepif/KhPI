@@ -35,10 +35,37 @@ class CoordinateSystemApp:
         self.add_circle_button.pack()
 
         self.canvas.bind("<Button-1>", self.on_canvas_click)
-        self.pixel_grid = [['white' for _ in range(width)] for _ in range(height)]
+        self.pixel_grid = [['white' for _ in range(width*2)] for _ in range(height*2)]
 
         self.draw_coordinate_system()
-        
+    
+    '''
+    def refresh_canvas(self):
+        for y, row in enumerate(self.pixel_grid):
+            for x, color in enumerate(row):
+                self.canvas.create_rectangle(x, y, x, y, fill=color, outline=color)
+    
+    def draw_coordinate_system(self):
+        for i in range(-Ox // 2, Ox // 2 + 1):
+            for x in range(width // 2 + i * width // Ox, width // 2 + i * width // Ox + 1):
+                for y in range(height):
+                    if (self.check_line(y, x)):
+                        self.pixel_grid[y][x] = 'lightgray'
+
+        for i in range(-Oy // 2, Oy // 2 + 1):
+            for y in range(height // 2 + i * height // Oy, height // 2 + i * height // Oy + 1):
+                for x in range(width):
+                    if (self.check_line(y, x)):
+                        self.pixel_grid[y][x] = 'lightgray'
+
+        for x in range(width):
+            self.pixel_grid[height // 2][x] = 'black'
+        for y in range(height):
+            self.pixel_grid[y][width // 2] = 'black'
+
+        self.refresh_canvas()
+    '''
+
     def draw_coordinate_system(self):
         for i in range(-Ox//2, Ox//2+1):
             self.canvas.create_line(width//2 + i * width//Ox, 0, width//2 + i * width//Ox, height, fill='lightgray')
@@ -115,7 +142,7 @@ class CoordinateSystemApp:
         coordinates = self.circle_entry.get()
         try:
             center_x, center_y, radius = map(float, coordinates.split(','))
-            center_x, center_y, radius = center_x * width//(Ox), center_y * height//(Oy), radius * (height+width)//((Ox+Oy))
+            center_x, center_y, radius = center_x * width//Ox, center_y * height//Oy, radius * (height+width)//(Ox+Oy)
             center_x, center_y = center_x + width//2, height//2 - center_y
             self.draw_circle_on_grid(int(center_x), int(center_y), int(radius), 'blue')
             self.canvas.create_oval(center_x - radius, center_y - radius, center_x + radius, center_y + radius, outline='blue', width=2)
@@ -123,6 +150,14 @@ class CoordinateSystemApp:
             print("Invalid input for circle coordinates. Please use the format: center_x, center_y, radius")
 
     def calculate_area(self, start_x, start_y, fill_color, border_color):
+        '''
+        for x in range(width):
+            for y in range(height):
+                if self.pixel_grid[y][x] == fill_color:
+                    self.pixel_grid[y][x] = 'white'
+                    self.canvas.create_rectangle(x, y, x, y, fill=self.pixel_grid[y][x], outline=self.pixel_grid[y][x])
+        '''
+
         stack = deque([(start_x, start_y)])
         filled = set()
         area = 0
@@ -134,6 +169,8 @@ class CoordinateSystemApp:
                 continue
 
             if self.pixel_grid[y][x] != border_color:
+                #if self.pixel_grid[y][x] != 'lightgray' and self.pixel_grid[y][x] != 'black':
+                #    self.pixel_grid[y][x] = fill_color
                 self.pixel_grid[y][x] = fill_color
                 area += 1
 
@@ -142,6 +179,7 @@ class CoordinateSystemApp:
                     if 0 <= new_x < width and 0 <= new_y < height:
                         stack.append((new_x, new_y))
             filled.add((x, y))
+            #self.canvas.create_rectangle(x, y, x, y, fill=self.pixel_grid[y][x], outline=self.pixel_grid[y][x])
 
         return area * ((Ox*Oy)/(width*height))
 
