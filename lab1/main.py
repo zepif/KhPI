@@ -44,8 +44,8 @@ class CoordinateSystemApp:
         self.pixel_grid = [['white' for _ in range(width*2)] for _ in range(height*2)]
 
         self.draw_coordinate_system()
-    
-    '''
+
+    ''' 
     def refresh_canvas(self):
         for y, row in enumerate(self.pixel_grid):
             for x, color in enumerate(row):
@@ -55,13 +55,13 @@ class CoordinateSystemApp:
         for i in range(-Ox // 2, Ox // 2 + 1):
             for x in range(width // 2 + i * width // Ox, width // 2 + i * width // Ox + 1):
                 for y in range(height):
-                    if (self.check_line(y, x)):
+                    if (self.check_dot(y, x) == True):
                         self.pixel_grid[y][x] = 'lightgray'
 
         for i in range(-Oy // 2, Oy // 2 + 1):
             for y in range(height // 2 + i * height // Oy, height // 2 + i * height // Oy + 1):
                 for x in range(width):
-                    if (self.check_line(y, x)):
+                    if (self.check_dot(y, x) == True):
                         self.pixel_grid[y][x] = 'lightgray'
 
         for x in range(width):
@@ -71,7 +71,7 @@ class CoordinateSystemApp:
 
         self.refresh_canvas()
     '''
-
+        
     def draw_coordinate_system(self):
         for i in range(-Ox//2, Ox//2+1):
             self.canvas.create_line(width//2 + i * width//Ox, 0, width//2 + i * width//Ox, height, fill='lightgray')
@@ -81,7 +81,7 @@ class CoordinateSystemApp:
         self.canvas.create_line(0, height//2, width, height//2, fill='black', width=2)
         self.canvas.create_line(width//2, 0, width//2, height, fill='black', width=2)
 
-    def check_line(self, x, y):
+    def check_dot(self, x, y):
         if x >= 0 and x < width and y >= 0 and y < height:
             return True
         else:
@@ -94,7 +94,7 @@ class CoordinateSystemApp:
         err = dx - dy
         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
         while x1 != x2 or y1 != y2:
-            if self.check_line(x1, y1) == True:
+            if self.check_dot(x1, y1) == True:
                 self.pixel_grid[y1][x1] = color
             e2 = 2 * err
             if e2 > -dy:
@@ -128,14 +128,20 @@ class CoordinateSystemApp:
         err = 0
 
         while x >= y:
-            self.pixel_grid[center_y + y][center_x + x] = color
-            self.pixel_grid[center_y + x][center_x + y] = color
-            self.pixel_grid[center_y + x][center_x - y] = color
-            self.pixel_grid[center_y + y][center_x - x] = color
-            self.pixel_grid[center_y - y][center_x - x] = color
-            self.pixel_grid[center_y - x][center_x - y] = color
-            self.pixel_grid[center_y - x][center_x + y] = color
-            self.pixel_grid[center_y - y][center_x + x] = color
+            positions = [
+                (center_y + y, center_x + x),
+                (center_y + x, center_x + y),
+                (center_y + x, center_x - y),
+                (center_y + y, center_x - x),
+                (center_y - y, center_x - x),
+                (center_y - x, center_x - y),
+                (center_y - x, center_x + y),
+                (center_y - y, center_x + x)
+            ]
+
+            for pos_y, pos_x in positions:
+                if self.check_dot(pos_y, pos_x):
+                    self.pixel_grid[pos_y][pos_x] = color
 
             if err <= 0:
                 y += 1
@@ -158,14 +164,12 @@ class CoordinateSystemApp:
             print("Invalid input for circle coordinates. Please use the format: center_x, center_y, radius")
 
     def calculate_area(self, start_x, start_y, fill_color, border_color):
-        '''
-        for x in range(width):
+        '''for x in range(width):
             for y in range(height):
                 if self.pixel_grid[y][x] == fill_color:
                     self.pixel_grid[y][x] = 'white'
-                    self.canvas.create_rectangle(x, y, x, y, fill=self.pixel_grid[y][x], outline=self.pixel_grid[y][x])
-        '''
-
+                    self.canvas.create_rectangle(x, y, x, y, fill=self.pixel_grid[y][x], outline=self.pixel_grid[y][x])'''
+        
         stack = deque([(start_x, start_y)])
         filled = set()
         area = 0
@@ -184,10 +188,12 @@ class CoordinateSystemApp:
 
                 for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                     new_x, new_y = x + dx, y + dy
-                    if 0 <= new_x < width and 0 <= new_y < height:
+                    if (0 <= new_x < width and 0 <= new_y < height and 
+                    (self.pixel_grid[new_x][new_y] == 'white' or self.pixel_grid[new_x][new_y] == 'lightgray') or
+                    self.pixel_grid[new_x][new_y] == 'black'):
                         stack.append((new_x, new_y))
             filled.add((x, y))
-            #self.canvas.create_rectangle(x, y, x, y, fill=self.pixel_grid[y][x], outline=self.pixel_grid[y][x])
+            #self.canvas.create_rectangle(x, y, x, y, outline=self.pixel_grid[y][x])
 
         return area * ((Ox*Oy)/(width*height))
 
