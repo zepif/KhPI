@@ -1,1 +1,1 @@
-Project works that only I actually do because my classmates don't know anything ¯\_(ツ)_/¯
+Project works that only I actually do because my classmates don't know anything ¯\\_(ツ)_/¯
