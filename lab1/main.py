@@ -80,7 +80,7 @@ class CoordinateSystemApp:
             #x1, y1, x2, y2 = x1 + width//2, height//2 - y1, x2 + width//2, height//2 - y2
             # line drawing
             x1, y1, x2, y2 = map(float, coordinates.split(','))
-            x1, y1, x2, y2 = x1 * width//(Ox//2), y1 * height//(Oy//2), x2 * width//(Ox//2), y2 * height//(Oy//2)
+            x1, y1, x2, y2 = x1 * width//(Ox), y1 * height//(Oy), x2 * width//(Ox), y2 * height//(Oy)
             x1, y1, x2, y2 = x1 + width//2, height//2 - y1, x2 + width//2, height//2 - y2
             dx, dy = (x2 - x1), (y2 - y1)
             x1, x2, y1, y2 = x1 + dx * 5000, x2 - dx * 5000, y1 + dy * 5000,  y2 - dy * 5000
@@ -115,7 +115,7 @@ class CoordinateSystemApp:
         coordinates = self.circle_entry.get()
         try:
             center_x, center_y, radius = map(float, coordinates.split(','))
-            center_x, center_y, radius = center_x * width//(Ox//2), center_y * height//(Oy//2), radius * (height+width)//((Ox+Oy)//2)
+            center_x, center_y, radius = center_x * width//(Ox), center_y * height//(Oy), radius * (height+width)//((Ox+Oy))
             center_x, center_y = center_x + width//2, height//2 - center_y
             self.draw_circle_on_grid(int(center_x), int(center_y), int(radius), 'blue')
             self.canvas.create_oval(center_x - radius, center_y - radius, center_x + radius, center_y + radius, outline='blue', width=2)
