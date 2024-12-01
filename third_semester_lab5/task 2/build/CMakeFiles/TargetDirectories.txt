@@ -1,3 +1,0 @@
-/home/acer/task 2/build/CMakeFiles/ArithmeticExpression.dir
-/home/acer/task 2/build/CMakeFiles/edit_cache.dir
-/home/acer/task 2/build/CMakeFiles/rebuild_cache.dir
