@@ -1,6 +1,7 @@
 #include "VectorAnalog.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "MatrixException.h"
 
@@ -89,11 +90,7 @@ void VectorAnalog::printAll() const {
 }
 
 void VectorAnalog::sort(const IComparer<ArithmeticExpression>& comparer) {
-    for (size_t i = 0; i < size_; ++i) {
-        for (size_t j = 0; j < size_ - i - 1; ++j) {
-            if (comparer.Compare(data[j], data[j + 1]) > 0) {
-                std::swap(data[j], data[j + 1]);
-            }
-        }
-    }
+    std::sort(data.get(), data.get() + size_,
+              [&](const ArithmeticExpression& a, const ArithmeticExpression& b)
+                  -> bool { return comparer.Compare(a, b) < 0; });
 }
